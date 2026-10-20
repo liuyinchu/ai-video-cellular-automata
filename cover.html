@@ -1,0 +1,19 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>元胞自动机 · 封面</title><link rel="stylesheet" href="/multiplane/runtime/shot.css"><style>
+@font-face{font-family:Noto;src:url('./assets/fonts/NotoSansSC.ttf');font-weight:100 900;font-display:block}
+#stage{width:1920px;height:1080px;background:#0b0e14;overflow:hidden}canvas{width:1920px;height:1080px;display:block}
+</style></head><body><div id="stage"><canvas id="cover"></canvas></div><script src="/multiplane/runtime/shot.js"></script><script src="src/simulation.js"></script><script>
+const c=document.getElementById('cover'),d=window.devicePixelRatio||1;c.width=1920*d;c.height=1080*d;const g=c.getContext('2d'),rows=CA.elementary(90,257,128);
+function txt(s,x,y,size,color,weight=400){g.font=`${weight} ${size}px Noto`;g.fillStyle=color;g.textBaseline='middle';g.fillText(s,x,y)}
+Shot.define({duration:1,fps:60,fonts:[['800 120px Noto','简单规则复杂世界'],['400 32px Noto','元胞自动机']],render(t){
+g.setTransform(d,0,0,d,0,0);g.fillStyle='#0b0e14';g.fillRect(0,0,1920,1080);
+g.strokeStyle='#141f2a';g.lineWidth=1;g.beginPath();for(let x=0;x<1920;x+=40){g.moveTo(x,0);g.lineTo(x,1080)}for(let y=0;y<1080;y+=40){g.moveTo(0,y);g.lineTo(1920,y)}g.stroke();
+const x0=858,y0=172,sx=4.7,sy=5.55;g.fillStyle='#58C4DD';for(let y=0;y<128;y++)for(let x=0;x<257;x++)if(rows[y][x]){g.globalAlpha=.55+.45*y/128;g.fillRect(x0+x*sx,y0+y*sy,sx-1,sy-1)}g.globalAlpha=1;
+const seedX=x0+128*sx;g.shadowColor='#F6D65C';g.shadowBlur=22;g.fillStyle='#F6D65C';g.fillRect(seedX-5,y0-5,15,15);g.shadowBlur=0;
+const grad=g.createLinearGradient(780,0,1150,0);grad.addColorStop(0,'#0b0e14');grad.addColorStop(1,'#0b0e1400');g.fillStyle=grad;g.fillRect(0,0,1150,1080);
+txt('CELLULAR AUTOMATA',120,143,24,'#58C4DD',500);g.fillStyle='#58C4DD';g.fillRect(120,193,92,3);
+txt('简单规则',110,360,128,'#F4F2E9',800);txt('复杂世界？',110,528,128,'#F6D65C',800);
+txt('从 5 个格子，走向涌现。',120,685,37,'#a2b1c3',400);
+for(const [x,y]of CA.glider){g.fillStyle='#58C4DD';g.fillRect(125+x*28,796+y*28,24,24)}
+txt('元胞自动机',245,840,34,'#F4F2E9',500);txt('局部规则 × 时间',1245,955,26,'#94a3b5',400);
+}});
+</script></body></html>
