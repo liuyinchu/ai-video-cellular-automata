@@ -136,17 +136,22 @@ def main():
         with urllib.request.urlopen(request, timeout=60) as response:
             return json.load(response)
     tag = config['releaseTag']
-    # The tag endpoint only resolves published releases; list drafts explicitly.
-    matches = [item for item in api('/releases?per_page=100') if item['tag_name'] == tag]
-    if matches:
-        release = sorted(matches, key=lambda item: (item['draft'], item['id']))[0]
-        for duplicate in matches:
-            if duplicate['id'] != release['id'] and duplicate['draft'] and not duplicate['assets'] and duplicate['author']['login'] == 'github-actions[bot]':
-                request = urllib.request.Request(api_root + '/releases/' + str(duplicate['id']), method='DELETE', headers={'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json'})
-                with urllib.request.urlopen(request, timeout=60) as response:
-                    assert response.status == 204
-    else:
+    # gh resolves a draft's pending tag with GraphQL, then returns its REST ID.
+    lookup = subprocess.run(['gh', 'release', 'view', tag, '--repo', repo, '--json', 'databaseId'], capture_output=True, text=True)
+    if lookup.returncode == 0:
+        release_id = json.loads(lookup.stdout)['databaseId']
+        release = api('/releases/' + str(release_id))
+    elif 'release not found' in lookup.stderr.lower():
         release = api('/releases', method='POST', data={'tag_name': tag, 'name': '简单规则，复杂世界？ · V2 正式版', 'draft': True, 'body': (ROOT / 'docs/release-notes.md').read_text()})
+    else:
+        raise RuntimeError('Release lookup failed: ' + lookup.stderr)
+    for duplicate in api('/releases?per_page=100'):
+        created_here = duplicate['author']['login'] == 'github-actions[bot]' or duplicate['html_url'].endswith('/untagged-4416341ef25d549c3b3d')
+        if duplicate['id'] != release['id'] and duplicate['draft'] and not duplicate['assets'] and duplicate['name'] == '简单规则，复杂世界？ · V2 正式版' and created_here:
+            request = urllib.request.Request(api_root + '/releases/' + str(duplicate['id']), method='DELETE', headers={'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json'})
+            with urllib.request.urlopen(request, timeout=60) as response:
+                assert response.status == 204
+    print('Using release ID:', release['id'], flush=True)
     existing = {asset['name']: asset for asset in release['assets']}
     for name, sha in wanted.items():
         if name in existing:
@@ -166,7 +171,7 @@ def main():
     receipt_file = assets / 'backup-verification.json'
     receipt_file.write_text(json.dumps(receipt, ensure_ascii=False, indent=2) + '\n')
     subprocess.run(['gh', 'release', 'upload', tag, str(receipt_file), '--repo', repo, '--clobber'], check=True)
-    api('/releases/' + str(release['id']), method='PATCH', data={'draft': False, 'name': '简单规则，复杂世界？ · V2 正式版', 'body': (ROOT / 'docs/release-notes.md').read_text(), 'make_latest': 'true'})
+    api('/releases/' + str(release['id']), method='PATCH', data={'tag_name': tag, 'draft': False, 'name': '简单规则，复杂世界？ · V2 正式版', 'body': (ROOT / 'docs/release-notes.md').read_text(), 'make_latest': 'true'})
     print('Release published with checksum-verified assets.', flush=True)
 
 if __name__ == '__main__':

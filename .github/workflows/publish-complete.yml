@@ -8,7 +8,7 @@ permissions:
   contents: read
 concurrency:
   group: complete-v2-release
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   release:
     runs-on: ubuntu-latest
