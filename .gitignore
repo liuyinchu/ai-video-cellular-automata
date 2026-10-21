@@ -7,3 +7,6 @@ logs/
 .DS_Store
 __pycache__/
 *.pyc
+
+_site/
+backup-staging/

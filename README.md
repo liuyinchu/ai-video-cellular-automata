@@ -1,8 +1,23 @@
 # 简单规则，复杂世界
 
-一支 1920×1080 / 60 fps 的中文元胞自动机科普片。全部制作源码、配音、封面和成片在此远端仓库内。
+一支 5 分 55 秒的中文元胞自动机科普片。正式成片为 V2：3840×2160、60 fps。源码、台本、配音素材与渲染管线保留在仓库；成片、音频分轨和完整工作目录快照保存在同仓库的 Releases。
 
-## 观看与交付
+**[观看成片与同步对比](https://liuyinchu.github.io/ai-video-cellular-automata/)** · **[下载与完整备份](https://github.com/liuyinchu/ai-video-cellular-automata/releases/tag/v2.0.0)**
+
+![发布封面](site/assets/cover.jpg)
+
+## 正式发布
+
+- V2 4K60：Release 附件 `cellular-world-v2.mp4`
+- V2 1080p30：Release 附件 `cellular-world-v2-preview.mp4`
+- V1 1080p60：Release 附件 `cellular-world-v1.mp4`
+- 发布封面、简介、章节与标签：`cover-and-description.zip`
+- 完整工程快照与校验文件：见 [备份与恢复说明](docs/backup-and-restore.md)
+- 发布页面源码：`site/`；部署工作流：`.github/workflows/pages.yml`
+
+网页默认观看 V2，展开「探索 V1 / V2 的动画变化」即可拖动分界线同步对比。影片和压缩包从 Releases 提供；Pages 部署时会校验并复制三份视频，所以网站不依赖任何本地服务。
+
+## 原始 V1 交付目录
 
 - 最终视频：`output/cellular-world.mp4`
 - 观看页面：`output/index.html`
@@ -26,7 +41,7 @@ Multiplane 0.3.8 使用 Chromium 和 FFmpeg 逐帧渲染 `film.html`。`src/film
 
 ## 复现
 
-远端：`yangshuyun@10.10.10.1`，目录 `~/workspace/dev/ai-video/test-1021-astra`。
+克隆仓库后安装依赖，或从 Release 恢复完整工作目录。完整快照中的依赖来自 macOS ARM64，跨平台使用时应重新安装依赖。
 
 需要 Node.js ≥24、Python ≥3.9。已安装的环境可直接使用：
 
@@ -59,7 +74,7 @@ scripts/run.sh npx multiplane stills film.html --at 15,80,150,220,290 --out outp
 
 ## 成片观看服务
 
-可运行 `scripts/run.sh node scripts/review-server.cjs`。服务只监听远端 127.0.0.1:18731，支持视频范围请求和章节跳转。通过 SSH 转发该端口后访问 `/output/index.html`。生产源码与素材以远端仓库为准。
+可运行 `scripts/run.sh node scripts/review-server.cjs`。服务只监听远端 127.0.0.1:18731，支持视频范围请求和章节跳转。通过 SSH 转发该端口后访问 `/output/index.html`。正式观看使用上方的 GitHub Pages 地址，预览服务仅供开发时临时启动。
 
 ## 科学范围
 
@@ -74,3 +89,18 @@ scripts/run.sh npx multiplane stills film.html --at 15,80,150,220,290 --out outp
 scripts/run.sh npm run test:v2
 scripts/run.sh npm run render:v2
 ```
+
+## 网站部署
+
+GitHub Pages 使用 GitHub Actions 发布。发布 Release 会触发部署；也可在 Actions 的 **Publish film website** 中手动运行。
+
+```sh
+# 从 Release 下载并逐文件验证视频 SHA-256，生成 _site/
+python3 scripts/build-pages.py
+# 已有完整工程输出时，可使用本地成片
+python3 scripts/build-pages.py --local
+# 临时本地预览（支持视频字节范围请求）
+scripts/run.sh node scripts/serve-pages.cjs
+```
+
+页面、字幕和封面在 `site/`；视频大小及校验值在 `site/media-manifest.json`。部署只包含网页需要的内容，完整工程保存在 Release 附件中。

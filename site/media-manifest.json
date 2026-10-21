@@ -1,0 +1,24 @@
+{
+  "release": "v2.0.0",
+  "repository": "liuyinchu/ai-video-cellular-automata",
+  "files": [
+    {
+      "name": "cellular-world-v1.mp4",
+      "local": "output/cellular-world.mp4",
+      "bytes": 86494816,
+      "sha256": "08b929f258cc3c96bcd666de39d3ae1776f5feb0f8eb415ce584d47c36ea612d"
+    },
+    {
+      "name": "cellular-world-v2.mp4",
+      "local": "output/v2/cellular-world-v2.mp4",
+      "bytes": 125587109,
+      "sha256": "327d53110d5ce362b2bcedcf190048df9d4933362bd080ae311bab3aef2a3f1d"
+    },
+    {
+      "name": "cellular-world-v2-preview.mp4",
+      "local": "output/v2/cellular-world-v2-preview.mp4",
+      "bytes": 40769154,
+      "sha256": "3c924b1e194a8398459fa939a2efc192eacbdf926d7f6cd29e33cdea54718165"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>简单规则，复杂世界？｜元胞自动机</title>
+<meta name="description" content="一段不到六分钟的数学之旅：从康威生命游戏到规则 90、30 与 110，看简单的局部规则如何长出复杂的整体行为。">
+<meta name="theme-color" content="#080e18">
+<meta property="og:type" content="website"><meta property="og:title" content="简单规则，复杂世界？｜元胞自动机">
+<meta property="og:description" content="从一个格子，看见涌现。一支 4K 数学可视化短片。">
+<meta property="og:url" content="https://liuyinchu.github.io/ai-video-cellular-automata/">
+<meta property="og:image" content="https://liuyinchu.github.io/ai-video-cellular-automata/assets/cover.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://liuyinchu.github.io/ai-video-cellular-automata/">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg"><link rel="stylesheet" href="style.css">
+<script src="player.js" defer></script></head>
+<body><a class="skip" href="#film">跳到视频</a><main>
+<header><div><div class="eyebrow">CELLULAR AUTOMATA</div><h1>简单规则，复杂世界？</h1><p>从一个格子出发，看见静止、摆动、移动，和涌现。</p></div><div class="version">数学可视化 <span>05:55 · 4K / 60</span></div></header>
+<section id="film" aria-label="元胞自动机科普视频"><div id="screen" class="screen">
+<div class="player" id="stage">
+<video id="old" preload="none" playsinline muted hidden data-src="media/cellular-world-v1.mp4" poster="assets/cover-v1.png" aria-label="V1 初版画面"></video>
+<video id="new" preload="metadata" playsinline src="media/cellular-world-v2-preview.mp4" poster="assets/cover.jpg" aria-label="元胞自动机正式成片"></video>
+<div class="divider" id="divider" hidden aria-hidden="true"></div><span class="pill v2pill" id="v2pill" hidden>V2 · 成片</span><span class="pill v1pill" id="v1pill" hidden>V1 · 初版</span>
+</div>
+<div class="transport"><button id="play" type="button" aria-label="播放或暂停">播放</button><button id="mute" type="button" aria-label="静音或取消静音" aria-pressed="false">声音开</button><input id="seek" type="range" min="0" max="355.348837" step="0.0166667" value="0" aria-label="播放进度"><span id="time" aria-live="off">00:00 / 05:55</span><select id="quality" aria-label="播放画质"><option value="media/cellular-world-v2-preview.mp4">1080p / 30</option><option value="media/cellular-world-v2.mp4">4K / 60</option></select><button id="fullscreen" type="button" aria-pressed="false">影院模式</button></div>
+<details id="comparison"><summary>探索 V1 / V2 的动画变化</summary><div class="compare"><button type="button" data-mode="0">V1 初版</button><button type="button" data-mode="100">V2 成片</button><button type="button" data-mode="50" class="active">对半看</button><label for="wipe">拖动分界线</label><input id="wipe" type="range" min="0" max="100" step="0.1" value="50" aria-label="V2 画面占比"></div><p class="compare-note">两版使用相同音轨。切换画面，或拖动分界线，看看同一个故事如何变得连贯。</p></details>
+</div><p id="status" class="status" role="status" aria-live="polite"></p></section>
+<nav class="links" aria-label="下载与项目"><a class="primary" href="https://github.com/liuyinchu/ai-video-cellular-automata/releases/download/v2.0.0/cellular-world-v2.mp4">下载 4K 成片 <span>↗</span></a><a href="https://github.com/liuyinchu/ai-video-cellular-automata/releases/download/v2.0.0/cover-and-description.zip">封面与发布文案</a><a href="assets/subtitles.zh-CN.srt" download>中文字幕</a><a href="https://github.com/liuyinchu/ai-video-cellular-automata">项目源码 ↗</a></nav>
+<section class="intro" aria-labelledby="about-title"><h2 id="about-title">复杂，藏在关系里。</h2><p>五个亮着的格子，为什么会像一艘飞船，自己穿过棋盘？从康威生命游戏出发，把二维世界压成一条线，走进规则 90、30 与 110：简单的局部判断，也能产生出乎意料的整体行为。</p></section>
+<section aria-labelledby="chapters-title"><div class="section-title"><h2 id="chapters-title">沿着规则，继续看</h2><span>点击章节，跳到这一刻</span></div><div class="chapters"><button type="button" data-time="0.000000"><small>00:00</small>五个格子的宇宙</button>
+<button type="button" data-time="31.627907"><small>00:31</small>世界的最小配方</button>
+<button type="button" data-time="66.976744"><small>01:06</small>只需要数邻居</button>
+<button type="button" data-time="100.465116"><small>01:40</small>静止与呼吸</button>
+<button type="button" data-time="133.953488"><small>02:13</small>移动的是图案</button>
+<button type="button" data-time="171.162791"><small>02:51</small>从图案到机器</button>
+<button type="button" data-time="208.372093"><small>03:28</small>把世界压成一条线</button>
+<button type="button" data-time="245.581395"><small>04:05</small>确定，却难以预测</button>
+<button type="button" data-time="280.930233"><small>04:40</small>八个答案与通用计算</button>
+<button type="button" data-time="312.558140"><small>05:12</small>复杂，藏在关系里</button></div></section>
+<footer><p>元胞演化按真实规则计算 · Multiplane 渲染 · MiniMax 合成旁白 · 程序配乐与音效<br>台本、动画代码与制作流程使用 AI 辅助完成。</p><a href="https://github.com/liuyinchu/ai-video-cellular-automata/releases/tag/v2.0.0">制作素材与完整工程 ↗</a></footer>
+<noscript><p>浏览器未启用 JavaScript。你仍可通过上方链接下载成片观看。</p></noscript>
+</main></body></html>
