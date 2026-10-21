@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Restore a Git-transported backup, verify it, then publish the existing release."""
-import argparse, hashlib, json, os, shutil, subprocess, tarfile, urllib.error, urllib.request
+import argparse, hashlib, json, os, shutil, subprocess, tarfile, time, urllib.error, urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -27,12 +28,39 @@ def main():
     assets = ROOT / 'backup-staging/release-assets'
     transfer.parent.mkdir(parents=True, exist_ok=True)
     assets.mkdir(parents=True, exist_ok=True)
-    if not transfer.exists():
-        subprocess.run(['git', 'clone', '--depth=1', '--single-branch', '--branch', config['archiveBranch'], f'https://github.com/{repo}.git', str(transfer)], check=True)
-    assert run('git', '-C', str(transfer), 'rev-parse', 'HEAD') == config['archiveCommit'], 'Archive commit mismatch'
+    transfer.mkdir(parents=True, exist_ok=True)
+    (transfer / 'chunks').mkdir(exist_ok=True)
+    base_url = f"https://raw.githubusercontent.com/{repo}/{config['archiveCommit']}"
+    def fetch(relative, expected_hash):
+        destination = transfer / relative
+        if destination.exists() and digest(destination) == expected_hash:
+            return relative
+        temporary = destination.with_suffix(destination.suffix + '.partial')
+        for attempt in range(3):
+            try:
+                with urllib.request.urlopen(base_url + '/' + relative, timeout=90) as response, temporary.open('wb') as target:
+                    shutil.copyfileobj(response, target, 1024 * 1024)
+                assert digest(temporary) == expected_hash, 'Download checksum mismatch: ' + relative
+                temporary.replace(destination)
+                return relative
+            except (OSError, AssertionError):
+                if attempt == 2:
+                    raise
+                time.sleep(2 ** attempt)
+    fetch('manifest.json', config['manifestSha256'])
     manifest_file = transfer / 'manifest.json'
-    assert digest(manifest_file) == config['manifestSha256'], 'Transfer manifest mismatch'
     manifest = json.loads(manifest_file.read_text())
+    for name, sha in manifest['supportFiles'].items():
+        assert Path(name).name == name
+        fetch(name, sha)
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        futures = []
+        for chunk in manifest['chunks']:
+            assert Path(chunk['file']).name == chunk['file']
+            futures.append(pool.submit(fetch, 'chunks/' + chunk['file'], chunk['sha256']))
+        for count, future in enumerate(as_completed(futures), 1):
+            future.result()
+            print(f"Downloaded and verified {count}/{len(futures)} Git backup chunks.", flush=True)
     archive = assets / 'full-project-snapshot.tar.gz'
     full_hash = hashlib.sha256()
     total = 0
@@ -108,13 +136,17 @@ def main():
         with urllib.request.urlopen(request, timeout=60) as response:
             return json.load(response)
     tag = config['releaseTag']
-    try:
-        release = api('/releases/tags/' + tag)
-    except urllib.error.HTTPError as error:
-        if error.code != 404:
-            raise
-        subprocess.run(['gh', 'release', 'create', tag, '--repo', repo, '--verify-tag', '--draft', '--title', '简单规则，复杂世界？ · V2 正式版', '--notes-file', str(ROOT / 'docs/release-notes.md')], check=True)
-        release = api('/releases/tags/' + tag)
+    # The tag endpoint only resolves published releases; list drafts explicitly.
+    matches = [item for item in api('/releases?per_page=100') if item['tag_name'] == tag]
+    if matches:
+        release = sorted(matches, key=lambda item: (item['draft'], item['id']))[0]
+        for duplicate in matches:
+            if duplicate['id'] != release['id'] and duplicate['draft'] and not duplicate['assets'] and duplicate['author']['login'] == 'github-actions[bot]':
+                request = urllib.request.Request(api_root + '/releases/' + str(duplicate['id']), method='DELETE', headers={'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json'})
+                with urllib.request.urlopen(request, timeout=60) as response:
+                    assert response.status == 204
+    else:
+        release = api('/releases', method='POST', data={'tag_name': tag, 'name': '简单规则，复杂世界？ · V2 正式版', 'draft': True, 'body': (ROOT / 'docs/release-notes.md').read_text()})
     existing = {asset['name']: asset for asset in release['assets']}
     for name, sha in wanted.items():
         if name in existing:
@@ -124,7 +156,7 @@ def main():
             continue
         print('Uploading:', name, flush=True)
         subprocess.run(['gh', 'release', 'upload', tag, str(assets / name), '--repo', repo], check=True, timeout=1200)
-    release = api('/releases/tags/' + tag)
+    release = api('/releases/' + str(release['id']))
     online = {asset['name']: asset for asset in release['assets']}
     for name, sha in wanted.items():
         asset = online[name]
