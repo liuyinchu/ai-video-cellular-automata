@@ -104,3 +104,19 @@ scripts/run.sh node scripts/serve-pages.cjs
 ```
 
 页面、字幕和封面在 `site/`；视频大小及校验值在 `site/media-manifest.json`。部署只包含网页需要的内容，完整工程保存在 Release 附件中。
+
+## Git 完整备份
+
+`main` 保存制作源码与发布管线；`archive/v2.0.0` 保存完整工作目录快照的 48 MiB 分块。只需源码时，使用：
+
+```sh
+git clone --single-branch --branch main https://github.com/liuyinchu/ai-video-cellular-automata.git
+```
+
+GitHub Actions 根据 `delivery/ready.json` 锁定归档提交，校验每块、完整压缩包以及包内全部文件，再上传 Release 并部署 Pages。它不依赖本地浏览器上传或本地运行的服务。
+
+也可以仅从 Git 恢复 Release 文件，不需要 GitHub 写入凭据：
+
+```sh
+python3 scripts/publish-from-git.py delivery/ready.json --assemble-only
+```

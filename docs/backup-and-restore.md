@@ -28,3 +28,9 @@ python3 scripts/verify-backup.py ../../backup-inventory.json
 ## 发布
 
 静态页面使用同仓库的 Release 视频，并在 GitHub Actions 中逐项核对 `site/media-manifest.json` 后部署。复现 V2 时运行 `scripts/run.sh npm run render:v2`。旧版输出与源码完整保留。
+
+## Git 分块副本
+
+同仓库的 `archive/v2.0.0` 分支保存完整压缩包的 48 MiB 分块、分块校验清单与逐文件清单。`delivery/ready.json` 固定该分支的具体提交和清单哈希。可从 main 分支运行 `python3 scripts/publish-from-git.py delivery/ready.json --assemble-only`，恢复并验证全部 Release 附件。该步骤无需 GitHub 写入凭据。
+
+完整快照记录的是 `e108ae2` 时的制作工程。后续 Git 分块传输、Release 上传和 Pages 部署脚本保留在 main 分支的后续提交中。
