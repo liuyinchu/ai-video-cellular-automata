@@ -64,3 +64,13 @@ scripts/run.sh npx multiplane stills film.html --at 15,80,150,220,290 --out outp
 ## 科学范围
 
 生命游戏中的「生命」是规则名称；本片不声称它模拟了真实生命的全部性质，也不声称宇宙必然是元胞自动机。规则 110 的画面是演化示例，不是 Cook 通用计算证明的完整构造。3Blue1Brown 是视觉语言参考，本片为独立创作，无关联或背书。
+
+
+## V2 连续生长版
+
+`film-v2.html` 是独立入口，保留 V1 源码及全部音频。4K60 成片与同步对比页位于 `output/v2/`。视觉交接设计、音频无损沿用方式和复现命令见 [V2 连续性说明](docs/v2-continuity.md)。
+
+```sh
+scripts/run.sh npm run test:v2
+scripts/run.sh npm run render:v2
+```

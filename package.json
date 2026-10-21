@@ -14,7 +14,10 @@
     "render": "sh scripts/render-final.sh",
     "preview": "multiplane serve --port 18721",
     "mix": ".venv/bin/python scripts/soundtrack.py",
-    "align": ".venv/bin/python scripts/align.py"
+    "align": ".venv/bin/python scripts/align.py",
+    "render:v2": "sh scripts/render-v2.sh",
+    "test:v2": "node scripts/test-v2.cjs",
+    "lint:v2": "multiplane lint film-v2.html --json"
   },
   "keywords": [],
   "author": "",

@@ -1,0 +1,7 @@
+{
+  "source": "V1 output/cellular-world.mp4",
+  "transformation": "AAC stream copy; no decoding or re-encoding",
+  "audioPacketSHA256": "SHA256=fe5d13c3bae8486e7b0e055add3780cefb20de6c92f4984fda6a00554fa7e778",
+  "m4aSHA256": "31eea26ecef2caec02ac41115fc1b623de3bb9aac0d80178e7f9b1173d07e4f2",
+  "decodedPCM16SHA256": "SHA256=47f93bf1ccc63b2b1afab049a5bf21cb17c35771c235192ed9baec0dd21953de"
+}

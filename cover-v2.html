@@ -1,0 +1,17 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>简单规则，复杂世界 · V2 封面</title><link rel="stylesheet" href="/multiplane/runtime/shot.css"><style>@font-face{font-family:Noto;src:url('./assets/fonts/NotoSansSC.ttf');font-weight:100 900}#stage{width:1920px;height:1080px;background:#080e18}canvas{width:1920px;height:1080px;display:block}</style><div id="stage"><canvas id="art"></canvas></div><script src="/multiplane/runtime/shot.js"></script><script src="./src/simulation.js"></script><script>
+const cv=document.getElementById('art'),c=cv.getContext('2d'),d=window.devicePixelRatio||1;cv.width=1920*d;cv.height=1080*d;const rows=CA.elementary(90,255,128);
+function text(s,x,y,size,col,w=400){c.font=`${w} ${size}px Noto`;c.textAlign='left';c.textBaseline='middle';c.fillStyle=col;c.fillText(s,x,y)}
+function line(x,y,a,b,col,w=1){c.beginPath();c.moveTo(x,y);c.lineTo(a,b);c.strokeStyle=col;c.lineWidth=w;c.stroke()}
+function cell(x,y,s,col){c.fillStyle=col;c.fillRect(x-s/2,y-s/2,s-2,s-2)}
+Shot.define({duration:1,fonts:[['700 87px Noto','只用几条规则就能创造世界'],['400 26px Noto','元胞自动机']],render(){c.setTransform(d,0,0,d,0,0);c.fillStyle='#080e18';c.fillRect(0,0,1920,1080);const g=c.createRadialGradient(1360,530,40,1360,530,1050);g.addColorStop(0,'#163142');g.addColorStop(1,'#080e18');c.fillStyle=g;c.fillRect(0,0,1920,1080);
+ for(let i=0;i<23;i++)line(930+i*42,155,930+i*42,948,'#1b3343',.6);for(let i=0;i<20;i++)line(932,155+i*42,1850,155+i*42,'#1b3343',.6);
+ for(let y=0;y<128;y++)for(let x=0;x<255;x++)if(rows[y][x]){const s=3.4;c.fillStyle=y%16?'#61cbd7':'#f6cc77';c.fillRect(1370+(x-127)*s,390+y*3.9,s-.24,3.66)}
+ cell(1370,329,31,'#f6cc77');line(1370,347,1370,386,'#f6cc77',1.7);text('1',1423,329,30,'#f6cc77');
+ text('CELLULAR AUTOMATA',142,126,18,'#8b9baa',500);line(142,175,720,175,'#294254');text('元胞自动机',142,241,30,'#61cbd7',500);
+ text('只用几条规则',135,390,87,'#f2f0e7',700);text('就能创造世界？',135,511,87,'#f6cc77',700);
+ cell(169,729,34,'#61cbd7');line(214,729,310,729,'#526b7b',1.4);
+ for(let y=0;y<3;y++)for(let x=0;x<3;x++){c.strokeStyle='#294254';c.lineWidth=1;c.strokeRect(337+x*29,686+y*29,29,29)}[[1,0],[2,1],[0,2],[1,2],[2,2]].forEach(([x,y])=>cell(352+x*29,701+y*29,26,'#61cbd7'));line(447,729,543,729,'#526b7b',1.4);
+ for(let i=0;i<7;i++){c.strokeStyle='#294254';c.strokeRect(565+i*29,714,29,29);if([2,3,4].includes(i))cell(580+i*29,729,26,'#61cbd7')}
+ text('一个格子，下一步，整个世界。',142,880,27,'#8b9baa');line(142,967,1778,967,'#294254');text('一段连续生长的数学旅程',142,1010,19,'#8b9baa');text('V2  /  4K · 60',1587,1010,19,'#f6cc77',500);
+}});
+</script></html>
